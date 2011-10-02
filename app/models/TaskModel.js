@@ -130,8 +130,11 @@ TaskModel.prototype.dueAsLocalIsoString = function() {
  * Will return null if there is no due date.
  */
 TaskModel.prototype.isoStringAsLocalDate = function(utc_string) {
+	if (!utc_string) return null;
+	
 	var date = Date.parse(utc_string);
 	if (!date) {
+		Mojo.Log.warn("TaskModel.isoStringAsLocalDate: cannot parse " + utc_string)
 		return null;
 	}
 	var timezone_offset = this.getTimezoneOffset(date);
@@ -194,6 +197,7 @@ TaskModel.prototype.dueDateStringWithoutTime = function(){
 	}
 	var local_due_date = this.isoStringAsLocalDate(this.due);
 	if (!local_due_date) {
+		Mojo.Log.warn("TaskModel.dueDateStringWithoutTime: cannot parse " + this.due)
 		return '';
 	}
 	return local_due_date.toString('yyyy-MM-dd');
@@ -264,7 +268,9 @@ TaskModel.prototype.isRecurring = function() {
 
 TaskModel.sortByDueThenName = function(a, b) {
 	if (a.dueLocalWithoutTime == b.dueLocalWithoutTime) { return TaskModel.sortByName(a, b); }
-	if ((a.dueLocalWithoutTime || '') < (b.dueLocalWithoutTime || '')) { return -1; }
+	if (!a.dueLocalWithoutTime) return 1;
+	if (!b.dueLocalWithoutTime) return -1;
+	if (a.dueLocalWithoutTime < b.dueLocalWithoutTime) { return -1; }
 	return 1;
 };
 
