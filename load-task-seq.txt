@@ -1,0 +1,32 @@
+﻿                    TaskListAssistant                Store            TaskListModel                   RTM            Retrier
+                            .                          .                    .                          .                .
+   construct--------------->|                          .                    .                          .                .
+                            |                          .                    .                          .                .
+                initialiseStoreAndLoadTaskList         .                    .                          .                .
+                            |                          .                    .                          .                .
+                            |--------------------->initialise               .                          .                .
+                                                       |                    .                          .                .
+                                                       |-------------->loadTaskList                    .                .
+                                                                            |                          .                .
+                                                  loadAllTasks<-------------|                          .                .
+                                                       |                                               .                .
+                 onTaskListModelChange<----------------|                                               .                .
+                            |                                                                          .                .
+                            |-------------------------------------->getListOfVisibleTasks              .                .
+                                                                                                       .                .
+                                                                                                       .                .
+   activate---------------->|                                                                          .                .
+                            |-------------------------------------------------------------------->fireNextEvent         .
+                                                                                                       |                .
+                                                                                                       |-------------->fire
+                                                                                                                        ↓
+                                                                                                         fireSetUpConnectionManagerSequence
+                                                                                                                        ↓
+                                                                                                             firePushChangesSequence
+                                                                                                                        ↓
+                                                                                                              firePullTasksSequence
+																											            ↓
+																													pullTasks
+																													    |
+																		                          callMethod<-----------|
+																	                           ('rtm.tasks.getList')
