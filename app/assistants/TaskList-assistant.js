@@ -11,6 +11,8 @@ function TaskListAssistant(config) {
 	this.config = config;
 	this.rtm = config.rtm;
 	this.taskListModel = config.taskListModel;
+	this.listListModel = config.listListModel;
+	this.selectedList = undefined;
 	this.taskListWidgetModel = { items: [] }; // Initial value, before task list loaded
 	this.initialiseStoreAndLoadTaskList();
 	this.rtm.retrier.onTaskListModelChange = this.onTaskListModelChange.bind(this);
@@ -45,6 +47,7 @@ TaskListAssistant.prototype.initialiseStoreAndLoadTaskList = function() {
 	var inst = this;
 	Store.initialise(function() {
 		inst.taskListModel.loadTaskList(inst.onTaskListModelChange.bind(inst));
+		inst.listListModel.loadListList();
 	});
 }
 
@@ -75,6 +78,36 @@ TaskListAssistant.prototype.setup = function() {
 	this.controller.setupWidget(Mojo.Menu.commandMenu, {}, this.commandMenuModel);
 
 	this.setUpTaskListWidget();
+	
+	// Header listener
+	this.header = this.controller.get('TaskListHeader');
+	Mojo.Event.listen(this.header, Mojo.Event.tap, this.handleHeaderTap.bind(this));
+}
+
+TaskListAssistant.prototype.handleHeaderTap = function(clickEvent) {
+	Mojo.Log.info("TaskListAssistant.handleHeaderTap: Entering");
+	var list_list = this.listListModel.getRegularListList();
+	var menu_items = [];
+	list_list.each(function(list) {
+		menu_items.push({
+			label: list.name,
+			command: list.listID
+		})
+	});
+	this.controller.popupSubmenu({
+		  onChoose: this.popupChoose,
+		  placeNear: clickEvent.target,
+		  items: menu_items
+		});
+	
+}
+
+TaskListAssistant.prototype.popupChoose = function(cmd) {
+	Mojo.Log.info("TaskListAssistant.popupChoose: Entering with cmd: " + cmd);
+	this.selectedList = cmd;
+	this.onTaskListModelChange();
+//	var cookie = new Mojo.Model.Cookie('DEFAULT_LIST_ID');
+//	cookie.put(cmd);
 }
 
 TaskListAssistant.prototype.setUpTaskListWidget = function(){
@@ -153,11 +186,12 @@ TaskListAssistant.prototype.handleHelpCommand = function() {
 }
 
 TaskListAssistant.prototype.handleAddTaskCommand = function() {
-	Mojo.Log.info("TaskListAssistant.handleAddTaskCommnad: Entering");
+	Mojo.Log.info("TaskListAssistant.handleAddTaskCommnad: Entering with selectd list " + this.selectedList);
 	var task = new TaskModel({
 		name: '',
-		due: Date.today().toISOString(),
-		localChanges: ['name', 'due']
+		due: '',
+		listID: this.selectedList,
+		localChanges: ['name']
 	});
 	var task_config = {
 		rtm: this.rtm,
@@ -174,7 +208,21 @@ TaskListAssistant.prototype.onTaskListModelChange = function() {
 		Mojo.Log.info("TaskListAssistant.onTaskListModelChange: Controller not set, exiting");
 	}
 	Mojo.Log.info("TaskListAssistant.onTaskListModelChange: Acting on change");
-	this.taskListWidgetModel.items = this.taskListModel.getListOfVisibleTasks();
+	if (!this.selectedList) {
+		var cookie = new Mojo.Model.Cookie('DEFAULT_LIST_ID');
+		var listID = cookie.get();
+		if (listID) {
+			this.selectedList = listID;
+		}
+	}
+
+	this.header.update(this.listListModel.getListNameByListID(this.selectedList));
+	
+	if (this.selectedList) {
+		this.taskListWidgetModel.items = this.taskListModel.getListOfVisibleTasksByListID(this.selectedList);
+	} else {
+		this.taskListWidgetModel.items = this.taskListModel.getListOfVisibleTasks();
+	}
 	this.controller.modelChanged(this.taskListWidgetModel);
 	this.hideOrDisplayAuthInstructions();
 }
@@ -275,7 +323,7 @@ TaskListAssistant.prototype.updateNetworkIndicator = function() {
 }
 
 TaskListAssistant.prototype.addNewTask = function(task) {
-	Mojo.Log.info("TaskListAssistant.addNewTask: Entering");
+	Mojo.Log.info("TaskListAssistant.addNewTask: Entering with task " + task);
 	this.taskListModel.addTask(task);
 	this.taskListModel.sort();
 	Store.saveTask(task);

@@ -14,6 +14,8 @@
     {"source": "app/lib/NetworkIndicator.js"},
     {"source": "app/models/TaskModel.js"},
     {"source": "app/models/TaskListModel.js"},
+    {"source": "app/models/ListModel.js"},
+    {"source": "app/models/ListListModel.js"},
     {"source": "app/assistants/DueDateSelector-assistant.js"},
     {
         "scenes": "TaskList",

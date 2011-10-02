@@ -7,8 +7,10 @@ function StageAssistant() {
 StageAssistant.prototype.setup = function() {
 	var config = {
 		rtm: new RTM(),
-		taskListModel: new TaskListModel()
+		taskListModel: new TaskListModel(),
+		listListModel: new ListListModel()
 	};
 	config.rtm.retrier.taskListModel = config.taskListModel;
+	config.rtm.retrier.listListModel = config.listListModel;
 	this.controller.pushScene("TaskList", config);
 }

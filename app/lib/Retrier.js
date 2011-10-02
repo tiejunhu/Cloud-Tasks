@@ -30,6 +30,7 @@
 function Retrier(rtm) {
 	this.rtm = rtm;
 	this.resetPullEventSpacer();
+	this.resetPullListsEventSpacer();
 	rtm.addOnNetworkRequestsChangeListener(this.onNetworkRequestsChange.bind(this));
 }
 
@@ -64,6 +65,7 @@ Retrier.prototype.fire = function() {
 	this.fireSetUpConnectionManagerSequence();
 	this.firePushChangesSequence();
 	this.firePullTasksSequence();
+	this.firePullListsSequence();
 }
 
 /**
@@ -175,4 +177,58 @@ Retrier.prototype.onNetworkRequestsChange = function(old_values, new_values) {
 			&& old_values.forPushingChanges > 0) {
 		this.taskListModel.purgeTaskList();
 	}
+}
+
+/*
+ * methods regard Lists
+ */
+
+Retrier.prototype.listListModel = undefined;
+
+Retrier.prototype.resetPullListsEventSpacer = function() {
+	this.pullListsEventSpacer = new EventSpacer(60*60*1000); // Pull no more than every 60 mins
+}
+
+Retrier.prototype.firePullListsSequence = function() {
+	if (!this.pullListsEventSpacer.isReady()) {
+		Mojo.Log.info("Retrier.firePullListsSequence: Too soon after last pull to pull tasks again");
+		return;
+	}
+	else if (!this.rtm.haveNetworkConnectivity) {
+		// Can't do anything about this, just have to wait for a connection
+		Mojo.Log.info("Retrier.firePullListsSequence: Need an internet connection, but can't take action");
+	}
+	else if (this.rtm.networkRequestsForPullingLists() > 0) {
+		Mojo.Log.info("Retrier.firePullListsSequence: Network requests for pulling lists ongoing, so won't take action");
+		return;
+	}
+	else if (!this.rtm.getToken()) {
+		Mojo.Log.info("Retrier.firePullListsSequence: No auth token, can't go further");
+	}
+	else {
+		this.pullLists();
+	}	
+}
+
+Retrier.prototype.pullLists = function() {
+	Mojo.Log.info("Retrier.pullLists: Pulling lists");
+	var inst = this;
+	this.rtm.callMethod('rtm.lists.getList',
+		{},
+		this.getListsListOnSuccessCallback.bind(this),
+		function(err_msg) {
+			Mojo.Log.info("Retrier.pullLists: Error: " + err_msg);
+			ErrorHandler.notify(err_msg + "\nLast Ajax response: " + Object.toJSON(inst.rtm.lastAjaxResponse),
+					"Retrier.pullLists");
+		}
+	);
+}
+
+Retrier.prototype.getListsListOnSuccessCallback = function(response) {
+	Mojo.Log.info("Retrier.getListsListOnSuccessCallback: Response is good");
+	var json = response.responseJSON;
+	var list_list = ListListModel.objectToListList(json);
+//	this.listListModel.setListList(list_list);
+	this.listListModel.replaceListList(list_list);
+	this.onTaskListModelChange();
 }

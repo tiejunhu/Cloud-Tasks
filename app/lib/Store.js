@@ -27,6 +27,12 @@ var Store = {
 			function(transaction, results) { Store.isInitialised = true; onSuccess(); },
 			"Couldn't initialise database"
 		);
+		Store.execute(
+			"create table if not exists 'lists' (json text)",
+			[],
+			function() { },
+			"Couldn't create table lists"
+		);
 	},
 	
 	execute: function(sql, args, onSuccess, onFailureString) {
@@ -227,6 +233,71 @@ var Store = {
 						[task.localID, Object.toJSON(obj)],
 						function() {},
 						"Could not save task"
+					);
+				}
+			},
+			// Error callback
+			Store.SQLTransactionErrorCallback,
+			// Success callback
+			{
+				handleEvent: function() { onSuccess() }
+			}
+		);
+	},
+
+	loadAllLists: function(onSuccess) {
+		if (!Store.isInitialised) {
+			Mojo.Log.error("Store.loadAllLists: Database not initialised");
+			ErrorHandler.notify("Database not initialised", "Store.loadAllLists");
+			return;
+		}
+		Store.execute(
+			"select json from lists",
+			[],
+			function(transaction, result) {
+				var lists = [];
+				var count = result.rows.length;
+				for (var i = 0; i < count; i++) {
+					var json = result.rows.item(i).json;
+					Mojo.Log.info("Store.loadAllLists: Loaded " + json);
+					var obj = json.evalJSON();
+					var list = ListModel.createFromObject(obj);
+					lists.push(list);
+				}
+				Mojo.Log.info("Store.loadAllLists: Loaded " + count + " lists");
+				onSuccess(lists);
+			},
+			"Could not load lists"
+		);
+	},
+	
+	replaceAllLists: function(list_list, onSuccess) {
+		if (!Store.isInitialised) {
+			Mojo.Log.error("Store.replaceAllLists: Database not initialised");
+			ErrorHandler.notify("Database not initialised", "Store.replaceAllLists");
+			return;
+		}
+		onSuccess = onSuccess || function(){};
+		Store.database.transaction(
+			// The transaction function
+			function(transaction) {
+				Mojo.Log.info("Store.replaceAllLists: Inserting new lists");
+				Store.executeInTransaction(
+					transaction,
+					"delete from lists",
+					[],
+					function() {},
+					"Could not delete lists"
+				);
+				for (var i = 0; i < list_list.length; i++) {
+					var list = list_list[i];
+					var obj = list.toObject();
+					Store.executeInTransaction(
+						transaction,
+						"insert into lists (json) values (?)",
+						[Object.toJSON(obj)],
+						function() {},
+						"Could not save list"
 					);
 				}
 			},

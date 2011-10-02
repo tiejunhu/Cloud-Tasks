@@ -19,6 +19,7 @@ function RTM() {
 		total: 0,
 		forPushingChanges: 0,
 		forPullingTasks: 0,
+		forPullingLists: 0,
 		forOther: 0
 	};
 	
@@ -32,7 +33,8 @@ function RTM() {
 		"rtm.tasks.delete": "forPushingChanges",
 		"rtm.tasks.complete": "forPushingChanges",
 		"rtm.tasks.setRecurrence": "forPushingChanges",
-		"rtm.tasks.getList": "forPullingTasks"
+		"rtm.tasks.getList": "forPullingTasks",
+		"rtm.lists.getList": "forPullingLists"
 	};
 }
 
@@ -145,6 +147,10 @@ RTM.prototype.networkRequestsForPushingChanges = function() {
  * Return the number of network requests for pulling tasks currently running.
  */
 RTM.prototype.networkRequestsForPullingTasks = function() {
+	return this.numNetworkRequests.forPullingTasks;
+}
+
+RTM.prototype.networkRequestsForPullingLists = function() {
 	return this.numNetworkRequests.forPullingTasks;
 }
 
@@ -520,6 +526,7 @@ RTM.prototype.addTask = function(task, onSuccess) {
 	Mojo.Log.info("RTM.addTask: Entering");
 	var parameters = {
 		name: task.name,
+		list_id: task.listID,
 		timeline: this.timeline
 	};
 	var inst = this;

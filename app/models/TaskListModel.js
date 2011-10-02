@@ -308,6 +308,17 @@ TaskListModel.prototype.getListOfVisibleTasks = function() {
 	return list;
 }
 
+TaskListModel.prototype.getListOfVisibleTasksByListID = function(listID) {
+	var list = [];
+	for (var i = 0; i < this._task_list.length; i++) {
+		var task = this._task_list[i];
+		if (!task.shouldNotBeVisible() && task.listID == listID) {
+			list.push(task);
+		}
+	}
+	return list;
+}
+
 TaskListModel.prototype.logTaskList = function() {
 	Mojo.Log.info("TaskListModel.logTaskList: Entering");
 	this._task_list.each(function(task_model) {
