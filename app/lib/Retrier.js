@@ -121,6 +121,9 @@ Retrier.prototype.firePullTasksSequence = function() {
 	else if (!this.rtm.getToken()) {
 		Mojo.Log.info("Retrier.firePullTasksSequence: No auth token, can't go further");
 	}
+	else if (!this.rtm.timeline) {
+		// do nothing, wait for the timeline created callback
+	}
 	else {
 		this.pullTasks();
 	}
@@ -205,6 +208,9 @@ Retrier.prototype.firePullListsSequence = function() {
 	else if (!this.rtm.getToken()) {
 		Mojo.Log.info("Retrier.firePullListsSequence: No auth token, can't go further");
 	}
+	else if (!this.rtm.timeline) {
+		// do nothing, wait for the timeline created callback
+	}
 	else {
 		this.pullLists();
 	}	
@@ -228,7 +234,6 @@ Retrier.prototype.getListsListOnSuccessCallback = function(response) {
 	Mojo.Log.info("Retrier.getListsListOnSuccessCallback: Response is good");
 	var json = response.responseJSON;
 	var list_list = ListListModel.objectToListList(json);
-//	this.listListModel.setListList(list_list);
 	this.listListModel.replaceListList(list_list);
 	this.onTaskListModelChange();
 }
