@@ -151,7 +151,7 @@ RTM.prototype.networkRequestsForPullingTasks = function() {
 }
 
 RTM.prototype.networkRequestsForPullingLists = function() {
-	return this.numNetworkRequests.forPullingTasks;
+	return this.numNetworkRequests.forPullingLists;
 }
 
 /** Call an RTM method.

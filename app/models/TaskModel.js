@@ -338,7 +338,7 @@ TaskModel.prototype.needsPurging = function() {
 }
 
 TaskModel.prototype.hasNoIDs = function() {
-	return !this.listID && !this.taskseriesID && !this.taskID;
+	return /*!this.listID &&*/ !this.taskseriesID && !this.taskID;
 }
 
 TaskModel.prototype.shouldNotBeVisible = function() {
