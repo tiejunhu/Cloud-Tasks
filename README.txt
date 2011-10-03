@@ -1,6 +1,14 @@
 Cloud Tasks
 -----------
 
+This software is based on Nik's Cloud Tasks. Please download the package
+from the above "Download" button and log issues/feature requests through
+issue tracker.
+
+
+Original README.txt
+-------------------
+
 This software is protected by the GPL version 2. See file
 licence.txt for details of the licence.
 
