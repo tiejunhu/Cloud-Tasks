@@ -309,39 +309,33 @@ RTM.prototype.fetchToken = function(frob, successCallback, failureCallback) {
 }
 
 RTM.prototype.setToken = function(token) {
-	var token_cookie = new Mojo.Model.Cookie('token');
-	token_cookie.put(token);
+	Utils.tokenCookie().put(token);
 	Mojo.Event.send(document, 'token-changed', {tokenSet: true});
 	this.fireNextEvent();
 }
 
 RTM.prototype.getToken = function() {
-	var token_cookie = new Mojo.Model.Cookie('token');
-	return token_cookie.get();
+	return Utils.tokenCookie().get();
 }
 
 RTM.prototype.deleteToken = function() {
-	var token_cookie = new Mojo.Model.Cookie('token');
-	token_cookie.remove();
+	Utils.tokenCookie().remove();
 	Mojo.Event.send(document, 'token-changed', {tokenSet: false});
 }
 
 RTM.prototype.setLatestModified = function(modified) {
-	var modified_cookie = new Mojo.Model.Cookie('latestModified');
 	if (typeof modified === 'undefined') {
 		modified = '';
 	}
-	modified_cookie.put(modified);
+	Utils.modifiedCookie().put(modified);
 }
 
 RTM.prototype.getLatestModified = function() {
-	var modified_cookie = new Mojo.Model.Cookie('latestModified');
-	return modified_cookie.get();
+	return Utils.modifiedCookie().get();
 }
 
 RTM.prototype.deleteLatestModified = function() {
-	var modified_cookie = new Mojo.Model.Cookie('latestModified');
-	modified_cookie.remove();
+	Utils.modifiedCookie().remove();
 }
 
 RTM.prototype.createTimeline = function() {

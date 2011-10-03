@@ -105,5 +105,18 @@ var Utils = {
 		else {
 			final_func.defer();
 		}
+	},
+
+	tokenCookie: function() {
+		return new Mojo.Model.Cookie('token');
+	},
+	
+	modifiedCookie: function() {
+		return new Mojo.Model.Cookie('latestModified');
+	},
+	
+	defaultListIdCookie: function() {
+		return new Mojo.Model.Cookie('DEFAULT_LIST_ID');
 	}
+	
 }

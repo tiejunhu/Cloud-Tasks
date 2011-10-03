@@ -47,12 +47,12 @@ var Store = {
 	
 	executeInTransaction: function(transaction, sql, args, onSuccess, onFailureString) {
 		var sql_detail = "SQL " + sql + " and args [" + args + "]";
-		Mojo.Log.info("Store.executeInTransaction: Executing " + sql_detail);
+//		Mojo.Log.info("Store.executeInTransaction: Executing " + sql_detail);
 		transaction.executeSql(
 			sql,
 			args,
 			function(transaction, result) {
-				Mojo.Log.info("Store.executeInTransaction: Success for " + sql_detail);
+//				Mojo.Log.info("Store.executeInTransaction: Success for " + sql_detail);
 				onSuccess(transaction, result);
 			}.bind(this),
 			function(transaction, error) {
@@ -259,7 +259,6 @@ var Store = {
 				var count = result.rows.length;
 				for (var i = 0; i < count; i++) {
 					var json = result.rows.item(i).json;
-					Mojo.Log.info("Store.loadAllLists: Loaded " + json);
 					var obj = json.evalJSON();
 					var list = ListModel.createFromObject(obj);
 					lists.push(list);
@@ -292,8 +291,7 @@ var Store = {
 				for (var i = 0; i < list_list.length; i++) {
 					var list = list_list[i];
 					if (list.position == -1) {
-						var cookie = new Mojo.Model.Cookie('DEFAULT_LIST_ID');
-						cookie.put(list.listID);
+						Utils.defaultListIdCookie().put(list.listID);
 					}
 					var obj = list.toObject();
 					Store.executeInTransaction(

@@ -106,8 +106,6 @@ TaskListAssistant.prototype.popupChoose = function(cmd) {
 	Mojo.Log.info("TaskListAssistant.popupChoose: Entering with cmd: " + cmd);
 	this.selectedList = cmd;
 	this.onTaskListModelChange();
-//	var cookie = new Mojo.Model.Cookie('DEFAULT_LIST_ID');
-//	cookie.put(cmd);
 }
 
 TaskListAssistant.prototype.setUpTaskListWidget = function(){
@@ -209,8 +207,7 @@ TaskListAssistant.prototype.onTaskListModelChange = function() {
 	}
 	Mojo.Log.info("TaskListAssistant.onTaskListModelChange: Acting on change");
 	if (!this.selectedList) {
-		var cookie = new Mojo.Model.Cookie('DEFAULT_LIST_ID');
-		var listID = cookie.get();
+		var listID = Utils.defaultListIdCookie().get();
 		if (listID) {
 			this.selectedList = listID;
 		}
