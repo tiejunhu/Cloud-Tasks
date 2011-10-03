@@ -102,9 +102,9 @@ TaskListAssistant.prototype.handleHeaderTap = function(clickEvent) {
 	
 }
 
-TaskListAssistant.prototype.popupChoose = function(cmd) {
-	Mojo.Log.info("TaskListAssistant.popupChoose: Entering with cmd: " + cmd);
-	this.selectedList = cmd;
+TaskListAssistant.prototype.popupChoose = function(listID) {
+	Mojo.Log.info("TaskListAssistant.popupChoose: Entering with cmd: " + listID);
+	this.selectedList = this.listListModel.getListByListID(listID);
 	this.onTaskListModelChange();
 }
 
@@ -184,11 +184,11 @@ TaskListAssistant.prototype.handleHelpCommand = function() {
 }
 
 TaskListAssistant.prototype.handleAddTaskCommand = function() {
-	Mojo.Log.info("TaskListAssistant.handleAddTaskCommnad: Entering with selectd list " + this.selectedList);
+	Mojo.Log.info("TaskListAssistant.handleAddTaskCommnad: Entering with selectd list " + this.selectedList.name);
 	var task = new TaskModel({
 		name: '',
 		due: '',
-		listID: this.selectedList,
+		listID: this.selectedList.listID,
 		localChanges: ['name']
 	});
 	var task_config = {
@@ -207,16 +207,15 @@ TaskListAssistant.prototype.onTaskListModelChange = function() {
 	}
 	Mojo.Log.info("TaskListAssistant.onTaskListModelChange: Acting on change");
 	if (!this.selectedList) {
-		var listID = Utils.defaultListIdCookie().get();
-		if (listID) {
-			this.selectedList = listID;
+		var list = Utils.defaultListCookie().get();
+		if (list) {
+			this.selectedList = list;
 		}
 	}
-
-	this.header.update(this.listListModel.getListNameByListID(this.selectedList));
 	
 	if (this.selectedList) {
-		this.taskListWidgetModel.items = this.taskListModel.getListOfVisibleTasksByListID(this.selectedList);
+		this.taskListWidgetModel.items = this.taskListModel.getListOfVisibleTasksByListID(this.selectedList.listID);
+		this.header.update(this.selectedList.name);
 	} else {
 		this.taskListWidgetModel.items = this.taskListModel.getListOfVisibleTasks();
 	}
@@ -250,6 +249,7 @@ TaskListAssistant.prototype.activate = function(returnValue) {
 
 	Mojo.Log.info("TaskListAssistant.activate: Firing next event...");
 	// This may push local changes, or do what's needed before that.
+
 	this.rtm.fireNextEvent();
 
 	if (!this.networkIndicator) {

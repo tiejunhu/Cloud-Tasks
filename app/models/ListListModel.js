@@ -56,14 +56,14 @@ ListListModel.prototype.getRegularListList = function() {
 	return list_list;
 }
 
-ListListModel.prototype.getListNameByListID = function(listID) {
+ListListModel.prototype.getListByListID = function(listID) {
 	for (var i = 0; i < this._list_list.length; i++) {
 		var list = this._list_list[i];
 		if (list.listID == listID) {
-			return list.name;
+			return list;
 		}
 	}
-	return 'All Tasks';
+	return undefined;
 }
 
 ListListModel.prototype.loadListList = function() {

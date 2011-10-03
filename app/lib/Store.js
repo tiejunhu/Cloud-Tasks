@@ -291,7 +291,7 @@ var Store = {
 				for (var i = 0; i < list_list.length; i++) {
 					var list = list_list[i];
 					if (list.position == -1) {
-						Utils.defaultListIdCookie().put(list.listID);
+						Utils.defaultListCookie().put(list);
 					}
 					var obj = list.toObject();
 					Store.executeInTransaction(

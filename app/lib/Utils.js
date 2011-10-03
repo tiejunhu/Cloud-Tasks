@@ -115,8 +115,7 @@ var Utils = {
 		return new Mojo.Model.Cookie('latestModified');
 	},
 	
-	defaultListIdCookie: function() {
-		return new Mojo.Model.Cookie('DEFAULT_LIST_ID');
-	}
-	
+	defaultListCookie: function() {
+		return new Mojo.Model.Cookie('defaultList');
+	}	
 }
