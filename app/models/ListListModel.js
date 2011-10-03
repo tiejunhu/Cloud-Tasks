@@ -49,7 +49,7 @@ ListListModel.prototype.getListList = function() {
 ListListModel.prototype.getRegularListList = function() {
 	var list_list = []
 	this._list_list.each(function(list) {
-		if (!list.smart) {
+		if (!list.smart && !list.archived && !list.deleted) {
 			list_list.push(list);
 		}
 	});
