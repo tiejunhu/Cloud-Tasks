@@ -291,6 +291,10 @@ var Store = {
 				);
 				for (var i = 0; i < list_list.length; i++) {
 					var list = list_list[i];
+					if (list.position == -1) {
+						var cookie = new Mojo.Model.Cookie('DEFAULT_LIST_ID');
+						cookie.put(list.listID);
+					}
 					var obj = list.toObject();
 					Store.executeInTransaction(
 						transaction,
