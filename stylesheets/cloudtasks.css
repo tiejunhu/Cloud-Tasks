@@ -10,7 +10,7 @@
 }
 
 #TaskList .task-due {
-	color: #1f75bf;
+	color: #0000ff;
 	font-size: 14px;
 	vertical-align: middle;
 	padding: 6px 12px 7px 6px;
@@ -43,7 +43,7 @@
 /* ----------------- Due and overdue tasks -------------- */
 
 #TaskList .due-false .task-name {
-	color: #666;
+	color: #00f;
 }
 
 #TaskList .overdue-true .task-due {
@@ -91,7 +91,7 @@
 	text-align: left;
 	color: #666;
 	font-style: italic;
-	font-size: 22px;
+	font-size: 20px;
 }
 
 /* ----- Edit task recurrence note (instructions and problem warning) ----- */
