@@ -45,14 +45,14 @@ EditTaskAssistant.prototype.setup = function() {
 	this.showRecurrenceNoteAsNeeded();
 	
 	var delete_task_model = {
-		buttonClass : 'negative',
+		buttonClass : 'palm-button negative buttonfloat',
 		label: "Delete"
 	};
 	this.controller.setupWidget('DeleteTask', {}, delete_task_model);
 	this.controller.listen('DeleteTask', Mojo.Event.tap, this.handleDeleteTaskEvent.bind(this));
 	
 	var complete_task_model = {
-		buttonClass : 'affirmative',
+		buttonClass : 'palm-button affirmative buttonfloat',
 		label: "Complete"
 	};
 	this.controller.setupWidget('CompleteTask', {}, complete_task_model);
