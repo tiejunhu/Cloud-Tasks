@@ -24,6 +24,11 @@
 	padding: 6px 6px 7px 12px;
 }
 
+#TaskList .task-name:before {
+	padding-right: 5px;
+	content: url(../images/checkbox.png);
+}
+
 /* ----------------- Recurrence symbols ------------------ */
 
 #TaskList .task-name img {
