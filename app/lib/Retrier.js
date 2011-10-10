@@ -194,7 +194,7 @@ Retrier.prototype.resetPullListsEventSpacer = function() {
 
 Retrier.prototype.firePullListsSequence = function() {
 	if (!this.pullListsEventSpacer.isReady()) {
-		Mojo.Log.info("Retrier.firePullListsSequence: Too soon after last pull to pull tasks again");
+		Mojo.Log.info("Retrier.firePullListsSequence: Too soon after last pull to pull lists again");
 		return;
 	}
 	else if (!this.rtm.haveNetworkConnectivity) {
@@ -235,5 +235,6 @@ Retrier.prototype.getListsListOnSuccessCallback = function(response) {
 	var json = response.responseJSON;
 	var list_list = ListListModel.objectToListList(json);
 	this.listListModel.replaceListList(list_list);
+	this.pullListEventSpacer.haveFired();
 	this.onTaskListModelChange();
 }
