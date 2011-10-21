@@ -235,6 +235,6 @@ Retrier.prototype.getListsListOnSuccessCallback = function(response) {
 	var json = response.responseJSON;
 	var list_list = ListListModel.objectToListList(json);
 	this.listListModel.replaceListList(list_list);
-	this.pullListEventSpacer.haveFired();
+	this.pullListsEventSpacer.haveFired();
 	this.onTaskListModelChange();
 }
